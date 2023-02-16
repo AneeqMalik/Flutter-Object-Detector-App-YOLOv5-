@@ -33,8 +33,8 @@ class _LoaderStateState extends State<LoaderState>
         borderRadius: BorderRadius.circular(10.0),
         child: Container(
             // color: Color(0XFF0000FFFF),
-            width: 120,
-            height: 120,
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
                 color: Color(0XFF0000FFFF),
                 borderRadius: BorderRadius.circular(8.0)),

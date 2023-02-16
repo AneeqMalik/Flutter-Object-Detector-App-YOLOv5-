@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool objectDetection = false;
   List<ResultObjectDetection?> objDetect = [];
   bool firststate = false;
+  bool message = true;
   @override
   void initState() {
     super.initState();
@@ -59,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future runObjectDetection() async {
     setState(() {
       firststate = false;
+      message = false;
     });
     //pick an image
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //Image with Detections....
 
           !firststate
-              ? LoaderState()
+              ? !message ? LoaderState() : Text("Select the Camera to Begin Detections")
               : Expanded(
                   child: Container(
                       child:
