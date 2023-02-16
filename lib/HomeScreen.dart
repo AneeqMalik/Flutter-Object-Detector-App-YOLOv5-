@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_pytorch/pigeon.dart';
 import 'package:flutter_pytorch/flutter_pytorch.dart';
+import 'package:object_detection/LoaderState.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ImagePicker _picker = ImagePicker();
   bool objectDetection = false;
   List<ResultObjectDetection?> objDetect = [];
+  bool firststate = false;
   @override
   void initState() {
     super.initState();
@@ -43,11 +45,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void handleTimeout() {
+    // callback function
+    // Do some work.
+    setState(() {
+      firststate = true;
+    });
+  }
+
+  Timer scheduleTimeout([int milliseconds = 10000]) =>
+      Timer(Duration(milliseconds: milliseconds), handleTimeout);
   //running detections on image
   Future runObjectDetection() async {
+    setState(() {
+      firststate = false;
+    });
     //pick an image
-    final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera);
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
     objDetect = await _objectModel.getImagePrediction(
         await File(image!.path).readAsBytes(),
         minimumScore: 0.1,
@@ -67,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       });
     });
+    scheduleTimeout(5 * 1000);
     setState(() {
       _image = File(image.path);
     });
@@ -82,19 +97,26 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //Image with Detections....
-          Expanded(
-            child: Container(
-              height: 150,
-              width: 300,
-              child: objDetect.isNotEmpty
-                  ? _image == null
-                      ? Text('No image selected.')
-                      : _objectModel!.renderBoxesOnImage(_image!, objDetect)
-                  : _image == null
-                      ? Text('No image selected.')
-                      : Image.file(_image!),
-            ),
-          ),
+
+          !firststate
+              ? LoaderState()
+              : Expanded(
+                  child: Container(
+                      child:
+                          _objectModel.renderBoxesOnImage(_image!, objDetect)),
+                ),
+
+          // !firststate
+          //     ? LoaderState()
+          //     : Expanded(
+          //         child: Container(
+          //             height: 150,
+          //             width: 300,
+          //             child: objDetect.isEmpty
+          //                 ? Text("hello")
+          //                 : _objectModel.renderBoxesOnImage(
+          //                     _image!, objDetect)),
+          //       ),
           Center(
             child: Visibility(
               visible: _imagePrediction != null,

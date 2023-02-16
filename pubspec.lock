@@ -142,6 +142,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gif:
+    dependency: "direct dev"
+    description:
+      name: gif
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.0"
   glob:
     dependency: transitive
     description:
