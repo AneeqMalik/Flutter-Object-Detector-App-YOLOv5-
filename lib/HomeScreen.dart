@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String pathObjectDetectionModel = "assets/models/yolov5s.torchscript";
     try {
       _objectModel = await FlutterPytorch.loadObjectDetectionModel(
+        // change the 80 with number of classes in your model pretrained yolov5 had almost 80 classes so I added 80 here.
           pathObjectDetectionModel, 80, 640, 640,
           labelPath: "assets/labels/labels.txt");
     } catch (e) {
